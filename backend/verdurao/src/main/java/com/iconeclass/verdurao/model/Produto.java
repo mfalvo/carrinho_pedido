@@ -88,6 +88,19 @@ public class Produto {
 		this.imagem = imagem;
 	}
     
+	/**
+	 * @return the descricao
+	 */
+	public String getDescricao() {
+		return descricao;
+	}
+
+	/**
+	 * @param imagem the descricao to set
+	 */
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
     
     
 }
