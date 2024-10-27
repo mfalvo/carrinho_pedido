@@ -49,7 +49,7 @@ public class PedidoController {
         if (optionalPedido.isPresent()) {
             Pedido pedido = optionalPedido.get();
             pedido.setCliente(pedidoDetails.getCliente());
-            pedido.setItens(pedidoDetails.getItens());
+            pedido.setPedidoitens(pedidoDetails.getPedidoitens());
             pedido.setDatahora(pedidoDetails.getDatahora());
             pedido.setStatus(pedidoDetails.getStatus());
             pedido.setTotal(pedidoDetails.getTotal());
