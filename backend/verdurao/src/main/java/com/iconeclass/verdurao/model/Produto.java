@@ -12,23 +12,21 @@ public class Produto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
     private String nome;
     private BigDecimal preco;
     private String descricao;
     private String imagem;
-	
-    
     // getters e setters
-    public Produto() {
+	public Produto() {
 		super();
 	}
-
-	public Produto(Long id, String nome, BigDecimal preco, String imagem) {
+	
+	public Produto(Long id, String nome, BigDecimal preco, String descricao, String imagem) {
 		super();
 		this.id = id;
 		this.nome = nome;
 		this.preco = preco;
+		this.descricao = descricao;
 		this.imagem = imagem;
 	}
 
@@ -75,6 +73,20 @@ public class Produto {
 	}
 
 	/**
+	 * @return the descricao
+	 */
+	public String getDescricao() {
+		return descricao;
+	}
+
+	/**
+	 * @param descricao the descricao to set
+	 */
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+
+	/**
 	 * @return the imagem
 	 */
 	public String getImagem() {
@@ -88,19 +100,5 @@ public class Produto {
 		this.imagem = imagem;
 	}
     
-	/**
-	 * @return the descricao
-	 */
-	public String getDescricao() {
-		return descricao;
-	}
-
-	/**
-	 * @param imagem the descricao to set
-	 */
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
-	}
-    
-    
+	
 }

@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,84 +22,76 @@ public class Carrinho {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @OneToOne
-    @JoinColumn(name="idcliente_fk")
+    @OneToOne(mappedBy="carrinho")
+    @JsonBackReference
     private Cliente cliente;
     
     @OneToMany(mappedBy = "carrinho", cascade = CascadeType.ALL)
-    private List<CarrinhoItem> items = new ArrayList<>();
+    @JsonManagedReference
+    private List<CarrinhoItem> carrinhoitems = new ArrayList<>();
     
-    private BigDecimal Total;
-    
+    private BigDecimal total;
     // getters e setters
-    
-    public Carrinho() {
+
+	public Carrinho() {
 		super();
 	}
-
-	public Carrinho(Long id, Cliente cliente, List<CarrinhoItem> items, BigDecimal total) {
+	public Carrinho(Long id, Cliente cliente, List<CarrinhoItem> carrinhoitems, BigDecimal total) {
 		super();
 		this.id = id;
 		this.cliente = cliente;
-		this.items = items;
-		Total = total;
+		this.carrinhoitems = carrinhoitems;
+		this.total = total;
 	}
-
 	/**
 	 * @return the id
 	 */
 	public Long getId() {
 		return id;
 	}
-
 	/**
 	 * @param id the id to set
 	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
-
 	/**
 	 * @return the cliente
 	 */
 	public Cliente getCliente() {
 		return cliente;
 	}
-
 	/**
 	 * @param cliente the cliente to set
 	 */
 	public void setCliente(Cliente cliente) {
 		this.cliente = cliente;
 	}
-
 	/**
-	 * @return the items
+	 * @return the carrinhoitems
 	 */
-	public List<CarrinhoItem> getItems() {
-		return items;
+	public List<CarrinhoItem> getCarrinhoitems() {
+		return carrinhoitems;
 	}
-
 	/**
-	 * @param items the items to set
+	 * @param carrinhoitems the carrinhoitems to set
 	 */
-	public void setItems(List<CarrinhoItem> items) {
-		this.items = items;
+	public void setCarrinhoitems(List<CarrinhoItem> carrinhoitems) {
+		this.carrinhoitems = carrinhoitems;
 	}
-
 	/**
 	 * @return the total
 	 */
 	public BigDecimal getTotal() {
-		return Total;
+		return total;
 	}
-
 	/**
 	 * @param total the total to set
 	 */
 	public void setTotal(BigDecimal total) {
-		Total = total;
+		this.total = total;
 	}
     
+   
     
 }
