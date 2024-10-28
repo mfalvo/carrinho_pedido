@@ -100,9 +100,9 @@ public class ClienteController {
         
     }
 
-    //Fornece um endpoint para atualizar perfil de um cliente existente <<<<<<<<<<<<<<
+    //Fornece um endpoint para atualizar perfil de um cliente existente 
     @PutMapping("/{email}") 
-    public ResponseEntity<Cliente> updateCliente(@PathVariable String email, @RequestBody Cliente clienteDetails) {
+    public ResponseEntity<Cliente> atualizaPerfilCliente(@PathVariable String email, @RequestBody Cliente clienteDetails) {
     	// localiza cliente por seu Id (email) para ser alterado
         Optional<Cliente> optionalCliente = clienteRepository.findById(email);
         // Se for encontrad, inicia bloco de código para sual alteração
@@ -112,23 +112,7 @@ public class ClienteController {
             
             cliente.setNome(clienteDetails.getNome()); // atribui novo nome informado para o objeto
             cliente.setSenha(clienteDetails.getSenha()); // atribui nova senha  para objeto cliente 
-            cliente.setImagem(clienteDetails.getImagem()); // atribui path imagem para objeto clienten
-            // Atualize os outros campos necessários
-            
-            // CARRINHO
-            // Verifique se o clienteDetails tem um carrinho associado
-            if (clienteDetails.getCarrinho() != null) {
-                Long carrinhoId = clienteDetails.getCarrinho().getId();
-				Optional<Carrinho> optionalCarrinho = carrinhoRepository.findById(carrinhoId);
-
-                if (optionalCarrinho.isPresent()) {
-                    Carrinho carrinho = optionalCarrinho.get();
-                    cliente.setCarrinho(carrinho);
-                    
-                    // Sincronize o relacionamento bidirecional
-                    carrinho.setCliente(cliente);
-                }
-            }
+            cliente.setImagem(clienteDetails.getImagem()); // atribui path imagem para objeto cliente
             
             final Cliente updatedCliente = clienteRepository.save(cliente);// Salva atualização
             return ResponseEntity.ok(updatedCliente); // retorna objeto cliente atualizado
