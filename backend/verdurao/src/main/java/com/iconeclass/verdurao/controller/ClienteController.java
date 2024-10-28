@@ -85,16 +85,11 @@ public class ClienteController {
     	if (!(optionalCliente.isPresent())) {
     		
     		Cliente updatedCliente = clienteRepository.save(cliente);
-    		
     		Carrinho carrinho = new Carrinho(); // cria um carrinho vazio
     		carrinho.setCliente(updatedCliente); // atribui Cliente  ao carrinho criado
     		Carrinho updatedCarrino = carrinhoRepository.save(carrinho);
-    		
-    		updatedCliente.setCarrinho(updatedCarrino);// e atribui carrinho ao Cliente
-    		
-    		 // salva carrinho no respectivo repositório
-    		
-    		return clienteRepository.save(updatedCliente); // salva cliente no repositório e o retorna ao solicitante e sai
+    		updatedCliente.setCarrinho(updatedCarrino);// e atribui carrinho ao Cliente    		
+    		return clienteRepository.save(cliente); // salva cliente no repositório e o retorna ao solicitante e sai
     	}
     	// o trecho de código seguinte somente é executado se já existe um cliente
     	// então não será criado um novo Cliente e será retornado null no lugar de um objeto Cliente e sai
