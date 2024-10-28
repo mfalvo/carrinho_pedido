@@ -22,7 +22,7 @@ public class Cliente {
 	@Column(length=50)
 	private String email; // Chave primaria
 	
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="idcarrinho_fk")
 	@JsonManagedReference
     private Carrinho carrinho;
