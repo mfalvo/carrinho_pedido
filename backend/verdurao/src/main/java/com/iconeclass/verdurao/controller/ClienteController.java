@@ -60,16 +60,18 @@ public class ClienteController {
     // Fornece um endpoint para buscar todos os clientes.
     @GetMapping 
     public Iterable<Cliente> getAllClientes() {
+    	// lista todos os clientes do repositório
         return clienteRepository.findAll();
     }
 
     // Fornece um endpoint para buscar um cliente específico pelo email(Id).
     @GetMapping("/{email}")  
     public ResponseEntity<Cliente> getClienteByEmail(@PathVariable String email) {
+    	//tenta localizar cliente por seu Id (email)
         Optional<Cliente> cliente = clienteRepository.findById(email);
-        if (cliente.isPresent()) {
-            return ResponseEntity.ok(cliente.get());
-        } else {
+        if (cliente.isPresent()) { // retorna objeto seo encontrar
+            return ResponseEntity.ok(cliente.get()); 
+        } else { // caso contrário retorna vazio
             return ResponseEntity.notFound().build();
         }
     }
@@ -77,33 +79,40 @@ public class ClienteController {
     //Fornece um endpoint para criar um novo cliente.
     @PostMapping 
     public Cliente createCliente(@RequestBody Cliente cliente) {
+    	// tenta localizar um cliente com mesmo email antes de criá-lo
     	Optional<Cliente> optionalCliente = clienteRepository.findById(cliente.getEmail());
+    	// se não existe outro cliente com o mesmo email segue com criação de cliente
     	if (!(optionalCliente.isPresent())) {
     		
-    		Carrinho carrinho = new Carrinho();
-    		carrinho.setCliente(cliente);
+    		Carrinho carrinho = new Carrinho(); // cria um carrinho vazio
+    		carrinho.setCliente(cliente); // atribui Cliente  ao carrinho criado
     		
-    		cliente.setCarrinho(carrinho);
+    		cliente.setCarrinho(carrinho);// e atribui carrinho ao Cliente
     		
-    		carrinhoRepository.save(carrinho);
+    		carrinhoRepository.save(carrinho); // salva carrinho no respectivo repositório
     		
-    		return clienteRepository.save(cliente);
+    		return clienteRepository.save(cliente); // salva cliente no repositório e o retorna ao solicitante e sai
     	}
+    	// o trecho de código seguinte somente é executado se já existe um cliente
+    	// então não será criado um novo Cliente e será retornado null no lugar de um objeto Cliente e sai
     	Cliente clienteExiste = null;
-    	 return clienteExiste; 
+    	return clienteExiste; 
         
     }
 
-    //Fornece um endpoint para atualizar perfil de um cliente existente
+    //Fornece um endpoint para atualizar perfil de um cliente existente <<<<<<<<<<<<<<
     @PutMapping("/{email}") 
     public ResponseEntity<Cliente> updateCliente(@PathVariable String email, @RequestBody Cliente clienteDetails) {
+    	// localiza cliente por seu Id (email) para ser alterado
         Optional<Cliente> optionalCliente = clienteRepository.findById(email);
+        // Se for encontrad, inicia bloco de código para sual alteração
         if (optionalCliente.isPresent()) {
+        	// obtem objeto cliente
             Cliente cliente = optionalCliente.get();
             
-            cliente.setNome(clienteDetails.getNome());
-            cliente.setSenha(clienteDetails.getSenha());
-            cliente.setImagem(clienteDetails.getImagem());
+            cliente.setNome(clienteDetails.getNome()); // atribui novo nome informado para o objeto
+            cliente.setSenha(clienteDetails.getSenha()); // atribui nova senha  para objeto cliente 
+            cliente.setImagem(clienteDetails.getImagem()); // atribui path imagem para objeto clienten
             // Atualize os outros campos necessários
             
             // CARRINHO
@@ -121,57 +130,61 @@ public class ClienteController {
                 }
             }
             
-            final Cliente updatedCliente = clienteRepository.save(cliente);
-            return ResponseEntity.ok(updatedCliente);
+            final Cliente updatedCliente = clienteRepository.save(cliente);// Salva atualização
+            return ResponseEntity.ok(updatedCliente); // retorna objeto cliente atualizado
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.notFound().build(); // retorna aviso se cliente não foi encontrado
         }
     }
     
     //Fornece um endpoint para deletar um cliente específico por seu email.
     @DeleteMapping("/{email}") 
     public ResponseEntity<Void> deleteCliente(@PathVariable String email) {
+    	// localiza objeto cliente por seu Id (email)
         Optional<Cliente> cliente = clienteRepository.findById(email);
-        if (cliente.isPresent()) {
+        if (cliente.isPresent()) {// Se encontrado executa deleção
             clienteRepository.delete(cliente.get());
             return ResponseEntity.noContent().build();
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.notFound().build(); // se não, retorna aviso de não encontrado
         }
     }
 
     
     // AÇÕES NO CARRINHO E CARRINHO ITEM /////////////////////////////////
     //Fornece um endpoint para adicionar produto no carrinho de cliente
-    @PutMapping("{email}/addItemCarribo/{idproduto}/{quant}/{preco}") 
+    @PutMapping("{email}/addItemCarribo/{idproduto}/{quant}/{preco}")  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     public ResponseEntity<Cliente> Cliente(@PathVariable String email, @PathVariable Long idproduto,  
     		@PathVariable Integer quant,  @PathVariable BigDecimal preco) {
-        
+        // tenta localizar Cliente
     	Optional<Cliente> optionalCliente = clienteRepository.findById(email);
+    	// tenta localizar Produto
     	Optional<Produto> optionalProduto = produtoRepository.findById(idproduto);
+    	
+    	// Se Cliente e Produto são econtrados, inicia-se a adição do produto como item de carrinho
         if (optionalCliente.isPresent() && optionalProduto.isPresent()) {
-          Cliente cliente = optionalCliente.get();
-          Produto produto = optionalProduto.get();
+          Cliente cliente = optionalCliente.get(); // obtem objeto Cliente
+          Produto produto = optionalProduto.get(); // obtem obejto Produto
           
-          Carrinho carrinho = cliente.getCarrinho();
-          CarrinhoItem carrinhoitem = new CarrinhoItem();
+          Carrinho carrinho = cliente.getCarrinho(); // obtem carrinho de cliente 
+          CarrinhoItem carrinhoitem = new CarrinhoItem(); // cria um item de carrinho
           
-          carrinhoitem.setCarrinho(carrinho);
-          carrinhoitem.setPreco(preco);
-          carrinhoitem.setProduto(produto);
-          carrinhoitem.setQuantidade(quant);
-          carrinhoitem.setSelecionado(true);
+          carrinhoitem.setCarrinho(carrinho); // atribui carrinho a item de carrinho criado
+          carrinhoitem.setPreco(preco); // atribui preço de produto ao item criado
+          carrinhoitem.setProduto(produto);// atribui o produto ao item criado
+          carrinhoitem.setQuantidade(quant); // atribui quantidade ao item criado
+          carrinhoitem.setSelecionado(true); // atribui true como selecioando ao item criado
           
-          cliente.getCarrinho().getCarrinhoitems().add(carrinhoitem);
+          cliente.getCarrinho().getCarrinhoitems().add(carrinhoitem); // adiciona item carrinho criado ao carrinho de cliente
           
           
-          carrinhoitemRepository.save(carrinhoitem);
-          carrinhoRepository.save(carrinho);        
-          final Cliente updatedCliente = clienteRepository.save(cliente);
-          return ResponseEntity.ok(updatedCliente);
+          carrinhoitemRepository.save(carrinhoitem); //  salva item de carrinho no respectivo repositório
+          carrinhoRepository.save(carrinho);  // salva carrinho no respectivo repositório 
+          final Cliente updatedCliente = clienteRepository.save(cliente); // salva cliente em seu repositório
+          return ResponseEntity.ok(updatedCliente); retorna Cliente atualizado com novo item de carrinho
         }
         
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.notFound().build(); // retorna aviso de Cliente ou Produto não encontrados
     }   
 
     // Fornece um endpoint para alterar a quantidade ou remover um itemcarrinho do carrinho de um cliente. Caso a
@@ -179,33 +192,37 @@ public class ClienteController {
     @PutMapping("/{email}/alteraCarrinhoItem/{carrinhoitemid}/{quant}/{preco}") 
     public ResponseEntity<Cliente> alteraCarrinhoItemById(@PathVariable String email,@PathVariable Long carrinhoitemid,
     		@PathVariable Integer quant, @PathVariable BigDecimal preco) {
-        
+        // tenta localizar cliente por seu Id
     	Optional<Cliente> optionalCliente = clienteRepository.findById(email);
+    	// tenta localizar item de carrinho por seu Id (Long)
     	Optional<CarrinhoItem> optionalCarrinhoItem = carrinhoitemRepository.findById(carrinhoitemid);
+    	// Caso consiga localizar Cliente e CarrinhoItem executa o bloco do if...
         if (optionalCliente.isPresent() && optionalCarrinhoItem.isPresent()) {
         	
-            Cliente cliente = optionalCliente.get();
-            CarrinhoItem carrinhoitem = optionalCarrinhoItem.get();
+            Cliente cliente = optionalCliente.get(); //  obtem objeto Cliente
+            CarrinhoItem carrinhoitem = optionalCarrinhoItem.get(); // obtem objeto CarrinhoItem
             
+            //verifica se CarrinhoItem informado pertence ao carrinho do cliente informado
             if (cliente.getCarrinho() == carrinhoitem.getCarrinho()) {
-            	if(carrinhoitem.getQuantidade() == 0) {
-            		Carrinho carrinho = cliente.getCarrinho();
-            		carrinho.getCarrinhoitems().remove(carrinhoitem);
-            		carrinhoRepository.save(carrinho);
-            		carrinhoitemRepository.delete(carrinhoitem);
+            	
+            	if(carrinhoitem.getQuantidade() == 0) { // Se nova quantidade de carrinhoitem informado é zero carrinhoitem é removido
+            		Carrinho carrinho = cliente.getCarrinho(); //obtem carrinho de cliente 
+            		carrinho.getCarrinhoitems().remove(carrinhoitem); // remove carrinhoitem de carrinho
+            		carrinhoRepository.save(carrinho); // salva carrinho no respectivo repositório
+            		carrinhoitemRepository.delete(carrinhoitem); // deleta carrinhoitem do respectivo repositório
             	}
-            	else
+            	else // caso quantidade seja diferente de zero é realizad uma atualização
             	{
-            		carrinhoitem.setPreco(preco);
-            		carrinhoitem.setQuantidade(quant);
-            		carrinhoitemRepository.save(carrinhoitem);
+            		carrinhoitem.setPreco(preco); // atualiza preço unitário
+            		carrinhoitem.setQuantidade(quant); // atualiza quantidade
+            		carrinhoitemRepository.save(carrinhoitem); // salva atualização de carrinhoitem no repositório
             	}
-            	final Cliente updatedCliente = clienteRepository.save(cliente);
-                return ResponseEntity.ok(updatedCliente);
+            	final Cliente updatedCliente = clienteRepository.save(cliente); // salva atualização no repositório cliente
+                return ResponseEntity.ok(updatedCliente); // retorna cliente atualizado
             }	
        }
         
-       return ResponseEntity.notFound().build();
+       return ResponseEntity.notFound().build(); // retorna aviso de cliente ou carrinho item não encontrado
     }   
 
     
