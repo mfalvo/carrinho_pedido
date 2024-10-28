@@ -137,9 +137,9 @@ public class ClienteController {
     
     // AÇÕES NO CARRINHO E CARRINHO ITEM /////////////////////////////////
     //Fornece um endpoint para adicionar produto no carrinho de cliente
-    @PutMapping("{email}/addItemCarribo/{idproduto}/{quant}/{preco}")  // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    @PutMapping("{email}/addItemCarribo/{idproduto}/{quant}") 
     public ResponseEntity<Cliente> Cliente(@PathVariable String email, @PathVariable Long idproduto,  
-    		@PathVariable Integer quant,  @PathVariable BigDecimal preco) {
+    		@PathVariable Integer quant) {
         // tenta localizar Cliente
     	Optional<Cliente> optionalCliente = clienteRepository.findById(email);
     	// tenta localizar Produto
@@ -154,7 +154,7 @@ public class ClienteController {
           CarrinhoItem carrinhoitem = new CarrinhoItem(); // cria um item de carrinho
           
           carrinhoitem.setCarrinho(carrinho); // atribui carrinho a item de carrinho criado
-          carrinhoitem.setPreco(preco); // atribui preço de produto ao item criado
+          carrinhoitem.setPreco(produto.getPreco()); // atribui preço de produto ao item criado
           carrinhoitem.setProduto(produto);// atribui o produto ao item criado
           carrinhoitem.setQuantidade(quant); // atribui quantidade ao item criado
           carrinhoitem.setSelecionado(true); // atribui true como selecioando ao item criado
@@ -165,7 +165,7 @@ public class ClienteController {
           carrinhoitemRepository.save(carrinhoitem); //  salva item de carrinho no respectivo repositório
           carrinhoRepository.save(carrinho);  // salva carrinho no respectivo repositório 
           final Cliente updatedCliente = clienteRepository.save(cliente); // salva cliente em seu repositório
-          return ResponseEntity.ok(updatedCliente); retorna Cliente atualizado com novo item de carrinho
+          return ResponseEntity.ok(updatedCliente); //retorna Cliente atualizado com novo item de carrinho
         }
         
         return ResponseEntity.notFound().build(); // retorna aviso de Cliente ou Produto não encontrados
