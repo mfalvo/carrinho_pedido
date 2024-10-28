@@ -30,7 +30,7 @@ public class Carrinho {
     @JsonManagedReference
     private List<CarrinhoItem> carrinhoitems = new ArrayList<>();
     
-    private BigDecimal total;
+    private BigDecimal total = BigDecimal.valueOf(0);
     // getters e setters
 
 	public Carrinho() {
