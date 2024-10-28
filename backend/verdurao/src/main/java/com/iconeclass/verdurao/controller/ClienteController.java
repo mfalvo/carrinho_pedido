@@ -203,11 +203,10 @@ public class ClienteController {
             	}
             	final Cliente updatedCliente = clienteRepository.save(cliente); // salva atualização no repositório cliente
                 return ResponseEntity.ok(updatedCliente); // retorna cliente atualizado
-            }	
+            }
        }
-        
        return ResponseEntity.notFound().build(); // retorna aviso de cliente ou carrinho item não encontrado
-    }   
+    }
 
     
     // AÇÕES EM PEDIDOS E PEDIDOS ITEM /////////////////////////////////
