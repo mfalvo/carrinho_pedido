@@ -196,7 +196,7 @@ public class ClienteController {
             //verifica se CarrinhoItem informado pertence ao carrinho do cliente informado
             if (cliente.getCarrinho() == carrinhoitem.getCarrinho()) {
             	
-            	if(carrinhoitem.getQuantidade() == 0) { // Se nova quantidade de carrinhoitem informado é zero carrinhoitem é removido
+            	if(quant == 0) { // Se nova quantidade de carrinhoitem informado é zero carrinhoitem é removido
             		Carrinho carrinho = cliente.getCarrinho(); //obtem carrinho de cliente 
             		carrinho.getCarrinhoitems().remove(carrinhoitem); // remove carrinhoitem de carrinho
             		carrinhoRepository.save(carrinho); // salva carrinho no respectivo repositório
