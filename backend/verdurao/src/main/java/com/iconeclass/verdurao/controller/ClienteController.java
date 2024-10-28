@@ -196,13 +196,29 @@ public class ClienteController {
             //verifica se CarrinhoItem informado pertence ao carrinho do cliente informado
             if (cliente.getCarrinho() == carrinhoitem.getCarrinho()) {
             	
+            	// Atualiza valor total do carrinho pela variação da quantidade do carrinhoitem
+            	// se quant for menor que o valor da quantidade atual de carrinhoitem
+            	// a diferença será um número negativo, caso contrário será uma quantidade positva.
+            	// Isso se refletirá no valor de ajuste que pode ser positivo - se a quantidade for maior ou
+            	// negativo se quantidade for menor.
+            	BigDecimal total_carrinho = carrinhoitem.getCarrinho().getTotal();
+            	BigDecimal diferenca_quant = BigDecimal.valueOf(quant - carrinhoitem.getQuantidade());
+            	BigDecimal subtotal = diferenca_quant.multiply(carrinhoitem.getProduto().getPreco());
+            	BigDecimal novo_total_carrinho = total_carrinho.add(subtotal);
+            	// Atualiza carrinho
+            	carrinhoitem.getCarrinho().setTotal(novo_total_carrinho);
+        		
+        		
+        		
+        		BigDecimal preco_item = carrinhoitem.getPreco();
+            	
             	if(quant == 0) { // Se nova quantidade de carrinhoitem informado é zero carrinhoitem é removido
             		Carrinho carrinho = cliente.getCarrinho(); //obtem carrinho de cliente 
             		carrinho.getCarrinhoitems().remove(carrinhoitem); // remove carrinhoitem de carrinho
             		carrinhoRepository.save(carrinho); // salva carrinho no respectivo repositório
             		carrinhoitemRepository.delete(carrinhoitem); // deleta carrinhoitem do respectivo repositório
             	}
-            	else // caso quantidade seja diferente de zero é realizad uma atualização
+            	else // caso quantidade seja diferente de zero é realizada uma atualização
             	{
             		carrinhoitem.setPreco(carrinhoitem.getProduto().getPreco()); // atualiza preço unitário
             		carrinhoitem.setQuantidade(quant); // atualiza quantidade
