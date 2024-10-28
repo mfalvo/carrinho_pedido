@@ -159,6 +159,15 @@ public class ClienteController {
           
           cliente.getCarrinho().getCarrinhoitems().add(carrinhoitem); // adiciona item carrinho criado ao carrinho de cliente
           
+          // Recalcula total do carrinho
+          BigDecimal total_carrinho = carrinho.getTotal();
+          BigDecimal preco = carrinhoitem.getPreco();
+          BigDecimal quantidade = BigDecimal.valueOf(quant);
+          
+          BigDecimal subtotal = preco.multiply(quantidade);
+          total_carrinho = total_carrinho.add(subtotal);
+          
+          carrinho.setTotal(total_carrinho);
           
           carrinhoitemRepository.save(carrinhoitem); //  salva item de carrinho no respectivo repositório
           carrinhoRepository.save(carrinho);  // salva carrinho no respectivo repositório 
