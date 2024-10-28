@@ -173,9 +173,9 @@ public class ClienteController {
 
     // Fornece um endpoint para alterar a quantidade ou remover um itemcarrinho do carrinho de um cliente. Caso a
     // quantidade (quant) fornecida é igual a zero, o item de carrinho será removido do carrinho do cliente e será deletado.
-    @PutMapping("/{email}/alteraCarrinhoItem/{carrinhoitemid}/{quant}/{preco}") 
+    @PutMapping("/{email}/alteraCarrinhoItem/{carrinhoitemid}/{quant}") 
     public ResponseEntity<Cliente> alteraCarrinhoItemById(@PathVariable String email,@PathVariable Long carrinhoitemid,
-    		@PathVariable Integer quant, @PathVariable BigDecimal preco) {
+    		@PathVariable Integer quant) {
         // tenta localizar cliente por seu Id
     	Optional<Cliente> optionalCliente = clienteRepository.findById(email);
     	// tenta localizar item de carrinho por seu Id (Long)
@@ -197,7 +197,7 @@ public class ClienteController {
             	}
             	else // caso quantidade seja diferente de zero é realizad uma atualização
             	{
-            		carrinhoitem.setPreco(preco); // atualiza preço unitário
+            		carrinhoitem.setPreco(carrinhoitem.getProduto().getPreco()); // atualiza preço unitário
             		carrinhoitem.setQuantidade(quant); // atualiza quantidade
             		carrinhoitemRepository.save(carrinhoitem); // salva atualização de carrinhoitem no repositório
             	}
