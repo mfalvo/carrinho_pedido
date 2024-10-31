@@ -231,6 +231,63 @@ public class ClienteController {
        return ResponseEntity.notFound().build(); // retorna aviso de cliente ou carrinho item não encontrado
     }
 
+    // MUDA ESTADO DO ITEM DE CARRINHO PARA TRUE/FALSE UTILIZANDO RESPECTIVAMENTE  1/0 
+    // Quando um item de carrinho tem seu atributo Selecao em false ele continua na lista mas não 
+    // compõem o preco total do carrinho.  E caso seja executado como pedido, ele não fará parte do
+    // pedido, mas continuará na lista de carrinho. 
+    @PutMapping("/{email}/alteraSelecaoCarrinhoItem/{carrinhoitemid}/{selecao}") 
+    public ResponseEntity<Cliente> alteraSelecaoCarrinhoItemById(@PathVariable String email,@PathVariable Long carrinhoitemid,
+    		@PathVariable Integer selecao) {
+    	
+    	// Verifica se valor de selecao está dentro do intervalo aceitável
+    	if (selecao < 0 && selecao > 1 ) return ResponseEntity.notFound().build();
+    	
+        // tenta localizar cliente por seu Id
+    	Optional<Cliente> optionalCliente = clienteRepository.findById(email);
+    	// tenta localizar item de carrinho por seu Id (Long)
+    	Optional<CarrinhoItem> optionalCarrinhoItem = carrinhoitemRepository.findById(carrinhoitemid);
+    	// Caso consiga localizar Cliente e CarrinhoItem executa o bloco do if...
+        if (optionalCliente.isPresent() && optionalCarrinhoItem.isPresent()) {
+        	
+            Cliente cliente = optionalCliente.get(); //  obtem objeto Cliente
+            CarrinhoItem carrinhoitem = optionalCarrinhoItem.get(); // obtem objeto CarrinhoItem
+            
+            //verifica se CarrinhoItem informado pertence ao carrinho do cliente informado
+            if (cliente.getCarrinho() == carrinhoitem.getCarrinho()) {
+            	
+            	// Atualiza valor total do carrinho pela variação da quantidade do carrinhoitem
+            	// se quant for menor que o valor da quantidade atual de carrinhoitem
+            	// a diferença será um número negativo, caso contrário será uma quantidade positva.
+            	// Isso se refletirá no valor de ajuste que pode ser positivo - se a quantidade for maior ou
+            	// negativo se quantidade for menor.
+            	BigDecimal total_carrinho = carrinhoitem.getCarrinho().getTotal();
+            	BigDecimal novo_total_carrinho = total_carrinho;
+            	
+            	BigDecimal diferenca_quant = BigDecimal.valueOf(carrinhoitem.getQuantidade());
+            	BigDecimal subtotal = diferenca_quant.multiply(carrinhoitem.getProduto().getPreco());
+            	
+            	if (carrinhoitem.getSelecionado()==true && selecao == 0) {
+                	carrinhoitem.setSelecionado(false);
+            		novo_total_carrinho = total_carrinho.subtract(subtotal);
+            	}
+            	if (carrinhoitem.getSelecionado()==false && selecao == 1) {
+                	carrinhoitem.setSelecionado(true);
+            		novo_total_carrinho = total_carrinho.add(subtotal);
+            	}
+            	// Atualiza carrinho
+            	Carrinho carrinho = carrinhoitem.getCarrinho();
+            	carrinho.setTotal(novo_total_carrinho);
+        		
+            	carrinhoitemRepository.save(carrinhoitem); // salva atualização de carrinhoitem no repositório
+            	carrinhoRepository.save(carrinho); // salva carrinho no respectivo repositório
+            	
+            }
+            	final Cliente updatedCliente = clienteRepository.save(cliente); // salva atualização no repositório cliente
+                return ResponseEntity.ok(updatedCliente); // retorna cliente atualizado
+            }
+       
+       return ResponseEntity.notFound().build(); // retorna aviso de cliente ou carrinho item não encontrado
+    }
     
     // AÇÕES EM PEDIDOS E PEDIDOS ITEM /////////////////////////////////
     //Fornece um endpoint para criar um pedido e transferir os itens selecionados do carrinho no pedido criado
@@ -263,11 +320,13 @@ public class ClienteController {
         		  
         		  PedidoItem pedidoitem = new PedidoItem(); // cria um item de pedido
         		  pedidoitem.setProduto(item.getProduto()); // atribui o produto do item de carrinho para item de pedido
+        		  pedidoitem.setPedido(pedido); // atribui pedido ao item pedido
         		  pedidoitem.setQuantidade(item.getQuantidade()); // atribui quatidade do item de carrinho para item de pedido
         		  pedidoitem.setPreco(item.getPreco()); // atribui preco do ite de carrinho para item de pedido
         		  pedidoitemRepository.save(pedidoitem); // salva item de pedido
         		  
         		  iterator.remove(); // remove item de carrinho da lista de itens de carrinho
+        		  carrinhoitemRepository.delete(item);
 
         		  Integer quant = item.getQuantidade();
         		  BigDecimal subtotal = item.getPreco().multiply(BigDecimal.valueOf(quant)); // calcula subtotal do item do pedido
@@ -277,7 +336,8 @@ public class ClienteController {
         	  } 
           }
           if(pedido != null ) { // Verifica se há um pedido realmente criado para concluir sua abertura
-        	  
+        	  carrinho.setCarrinhoitems(carrinhoitens);
+        	  carrinhoRepository.save(carrinho);
         	  pedido.setPedidoitens(listaItemPedidos); //  atribui a lista local de items de pedido para pedido criado
         	  pedido.setTotal(total_pedido); // atribui o valor total do pedido calculado
         	  pedidoRepository.save(pedido); //  salva pedido
