@@ -38,37 +38,6 @@ public class PedidoItemController {
         }
     }
 
-    @PostMapping
-    public PedidoItem createPedidoItem(@RequestBody PedidoItem pedidoItem) {
-        return pedidoItemRepository.save(pedidoItem);
-    }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<PedidoItem> updatePedidoItem(@PathVariable Long id, @RequestBody PedidoItem pedidoItemDetails) {
-        Optional<PedidoItem> optionalPedidoItem = pedidoItemRepository.findById(id);
-        if (optionalPedidoItem.isPresent()) {
-            PedidoItem pedidoItem = optionalPedidoItem.get();
-            pedidoItem.setPedido(pedidoItemDetails.getPedido());
-            pedidoItem.setProduto(pedidoItemDetails.getProduto());
-            pedidoItem.setQuantidade(pedidoItemDetails.getQuantidade());
-            pedidoItem.setPreco(pedidoItemDetails.getPreco());
-            // Atualize outros campos conforme necessário
 
-            final PedidoItem updatedPedidoItem = pedidoItemRepository.save(pedidoItem);
-            return ResponseEntity.ok(updatedPedidoItem);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePedidoItem(@PathVariable Long id) {
-        Optional<PedidoItem> pedidoItem = pedidoItemRepository.findById(id);
-        if (pedidoItem.isPresent()) {
-            pedidoItemRepository.delete(pedidoItem.get());
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
 }

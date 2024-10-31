@@ -38,38 +38,4 @@ public class PedidoController {
         }
     }
 
-    @PostMapping
-    public Pedido createPedido(@RequestBody Pedido pedido) {
-        return pedidoRepository.save(pedido);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Pedido> updatePedido(@PathVariable Long id, @RequestBody Pedido pedidoDetails) {
-        Optional<Pedido> optionalPedido = pedidoRepository.findById(id);
-        if (optionalPedido.isPresent()) {
-            Pedido pedido = optionalPedido.get();
-            pedido.setCliente(pedidoDetails.getCliente());
-            pedido.setPedidoitens(pedidoDetails.getPedidoitens());
-            pedido.setDatahora(pedidoDetails.getDatahora());
-            pedido.setStatus(pedidoDetails.getStatus());
-            pedido.setTotal(pedidoDetails.getTotal());
-            // Atualize outros campos conforme necessário
-
-            final Pedido updatedPedido = pedidoRepository.save(pedido);
-            return ResponseEntity.ok(updatedPedido);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePedido(@PathVariable Long id) {
-        Optional<Pedido> pedido = pedidoRepository.findById(id);
-        if (pedido.isPresent()) {
-            pedidoRepository.delete(pedido.get());
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-}
+ }
