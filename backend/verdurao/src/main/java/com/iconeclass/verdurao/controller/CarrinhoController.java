@@ -112,9 +112,10 @@ public class CarrinhoController {
     // Fornece um endpoint para deletar um carrinho
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCarrinho(@PathVariable Long id) {
-        Optional<Carrinho> carrinho = carrinhoRepository.findById(id);
-        if (carrinho.isPresent()) {
-            carrinhoRepository.delete(carrinho.get());
+        Optional<Carrinho> optionalcarrinho = carrinhoRepository.findById(id);
+        if (optionalcarrinho.isPresent()) {
+        	Carrinho carrinho = optionalcarrinho.get();
+            carrinhoRepository.delete(carrinho);
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.notFound().build();
