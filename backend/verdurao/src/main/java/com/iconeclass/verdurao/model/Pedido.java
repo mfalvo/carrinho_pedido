@@ -24,19 +24,22 @@ public class Pedido {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@ManyToOne
+	
+	@ManyToOne( cascade = CascadeType.ALL)
 	@JoinColumn(name="idcliente_fk")
 	@JsonBackReference
 	private Cliente cliente;
-	@OneToMany(mappedBy="pedido")
-	private List<PedidoItem> pedidoitens = new ArrayList();
+	
+	@OneToMany(mappedBy="pedido",  cascade = CascadeType.ALL)
+	@JsonManagedReference
+	private List<PedidoItem> pedidoitens = new ArrayList<>();
 	
 	private Date datahora;
 	
 	@Column(length=30)
 	private String status;
 	
-	private BigDecimal Total;
+	private BigDecimal total;
 	//Getters and Setters
 
 	public Pedido() {
@@ -50,7 +53,7 @@ public class Pedido {
 		this.pedidoitens = pedidoitens;
 		this.datahora = datahora;
 		this.status = status;
-		Total = total;
+		this.total = total;
 	}
 	/**
 	 * @return the id
@@ -116,13 +119,13 @@ public class Pedido {
 	 * @return the total
 	 */
 	public BigDecimal getTotal() {
-		return Total;
+		return total;
 	}
 	/**
 	 * @param total the total to set
 	 */
 	public void setTotal(BigDecimal total) {
-		Total = total;
+		this.total = total;
 	}
 	
 	
