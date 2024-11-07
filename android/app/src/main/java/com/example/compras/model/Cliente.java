@@ -1,5 +1,8 @@
 package com.example.compras.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Cliente {
 
     private String email; // Chave primaria
