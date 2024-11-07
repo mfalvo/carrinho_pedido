@@ -8,7 +8,7 @@ public class Produto {
     private BigDecimal preco;
     private String descricao;
     private String imagem;
-    
+
     //Constructors
 
     public Produto() {
