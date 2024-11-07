@@ -1,5 +1,8 @@
 package com.example.compras.model;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+
 public class Carrinho {
     private Long id;
     private Cliente cliente;
