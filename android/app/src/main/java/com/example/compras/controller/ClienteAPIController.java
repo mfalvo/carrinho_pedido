@@ -20,16 +20,19 @@ public class ClienteAPIController {
         void onFailure(Throwable t);
     }
 
+    // Construtor de ClienteAPIController
     public ClienteAPIController(RetrofitClient retrofitClient) {
         this.retrofitClient = retrofitClient;
         this.clienteAPI = RetrofitClient.getRetrofitInstance().create(ClienteAPI.class);
     }
 
-    public void getLoginUser(String email, String password,
+    // API de Login
+    public void getLoginCliente(String email, String nome, String password,
                              ClienteAPIController.ResponseCallback responseCallback) {
 
         Cliente cliente = new Cliente();
         cliente.setEmail(email);
+        cliente.setNome(nome);
         cliente.setSenha(password);
 
         Call<Cliente> call = this.clienteAPI.login(cliente);
