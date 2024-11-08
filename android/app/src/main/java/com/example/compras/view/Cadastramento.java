@@ -51,7 +51,6 @@ public class Cadastramento extends AppCompatActivity {
     // Executa Cadastramento de cliente
     public void getLogin(View view){
 
-        final int 
 
         String email_cliente = this.emailCliente.getText().toString();
         String nome_cliente = this.nomeCliente.getText().toString();
@@ -63,7 +62,7 @@ public class Cadastramento extends AppCompatActivity {
             RetrofitClient retrofitClient = new RetrofitClient();
             ClienteAPIController clienteAPIController = new ClienteAPIController(retrofitClient);
 
-            clienteAPIController.getLoginUser(email_cliente, nome_cliente, password01, new ClienteAPIController.ResponseCallback() {
+            clienteAPIController.getLoginCliente(email_cliente, nome_cliente, password01, new ClienteAPIController.ResponseCallback() {
                 @Override
                 public void onSuccess(Cliente cliente) {
                     //textView.setText(user_list.getSupport().getText());
@@ -86,6 +85,15 @@ public class Cadastramento extends AppCompatActivity {
                     alerta.create().show();
                 }
             });
+        }
+        else
+        {
+            AlertDialog.Builder alerta = new AlertDialog.Builder(Cadastramento.this);
+            alerta.setCancelable(false);
+            alerta.setTitle("Cadastramento");
+            alerta.setMessage("As senhas informadas não são idênticas!! Tente novamente!");
+            alerta.setNegativeButton("Ok", null);
+            alerta.create().show();
         }
 
     }
