@@ -58,11 +58,36 @@ public class ClienteController {
 
     // AÇÕES NO CLIENTE /////////////////////////////////
     // Fornece um endpoint para buscar todos os clientes.
+    
+    
+    
+    //Fornece um endpoint para relizar um login.
+    @GetMapping("/login")
+    public Cliente loginCliente(@RequestBody Cliente cliente) {
+    	Cliente clienteNaoExiste = null;
+    	// tenta localizar um cliente com mesmo email e password
+    	Optional<Cliente> optionalCliente = clienteRepository.findById(cliente.getEmail());
+    	if (optionalCliente.isPresent()) {
+    		Cliente clienteExiste = optionalCliente.get();
+    		if (clienteExiste.getSenha() == cliente.getSenha())
+    		{
+    			clienteExiste.setSenha("");
+    			return clienteExiste;
+    		}
+    	}
+    	return clienteNaoExiste; 
+    } 
+    
+    
+    
+    // Retorna lista de todos os clientes
     @GetMapping 
     public Iterable<Cliente> getAllClientes() {
     	// lista todos os clientes do repositório
         return clienteRepository.findAll();
     }
+    
+    
 
     // Fornece um endpoint para buscar um cliente específico pelo email(Id).
     @GetMapping("/{email}")  
@@ -76,6 +101,8 @@ public class ClienteController {
         }
     }
 
+    
+    
     //Fornece um endpoint para criar um novo cliente.
     @PostMapping 
     public Cliente createCliente(@RequestBody Cliente cliente) {
@@ -98,6 +125,8 @@ public class ClienteController {
         
     }
 
+    
+    
     //Fornece um endpoint para atualizar perfil de um cliente existente 
     @PutMapping("/{email}") 
     public ResponseEntity<Cliente> atualizaPerfilCliente(@PathVariable String email, @RequestBody Cliente clienteDetails) {
@@ -119,6 +148,8 @@ public class ClienteController {
         }
     }
     
+    
+    
     //Fornece um endpoint para deletar um cliente específico por seu email.
     @DeleteMapping("/{email}") 
     public ResponseEntity<Void> deleteCliente(@PathVariable String email) {
@@ -132,6 +163,8 @@ public class ClienteController {
         }
     }
 
+    
+    
     
     // AÇÕES NO CARRINHO E CARRINHO ITEM /////////////////////////////////
     //Fornece um endpoint para adicionar produto no carrinho de cliente
@@ -178,6 +211,8 @@ public class ClienteController {
         return ResponseEntity.notFound().build(); // retorna aviso de Cliente ou Produto não encontrados
     }   
 
+    
+    
     // Fornece um endpoint para alterar a quantidade ou remover um itemcarrinho do carrinho de um cliente. Caso a
     // quantidade (quant) fornecida é igual a zero, o item de carrinho será removido do carrinho do cliente e será deletado.
     @PutMapping("/{email}/alteraCarrinhoItem/{carrinhoitemid}/{quant}") 
@@ -206,10 +241,7 @@ public class ClienteController {
             	BigDecimal subtotal = diferenca_quant.multiply(carrinhoitem.getProduto().getPreco());
             	BigDecimal novo_total_carrinho = total_carrinho.add(subtotal);
             	// Atualiza carrinho
-            	carrinhoitem.getCarrinho().setTotal(novo_total_carrinho);
-        		
-        		
-        		
+            	carrinhoitem.getCarrinho().setTotal(novo_total_carrinho);    		
         		BigDecimal preco_item = carrinhoitem.getPreco();
             	
             	if(quant == 0) { // Se nova quantidade de carrinhoitem informado é zero carrinhoitem é removido
@@ -231,6 +263,8 @@ public class ClienteController {
        return ResponseEntity.notFound().build(); // retorna aviso de cliente ou carrinho item não encontrado
     }
 
+    
+    
     // MUDA ESTADO DO ITEM DE CARRINHO PARA TRUE/FALSE UTILIZANDO RESPECTIVAMENTE  1/0 
     // Quando um item de carrinho tem seu atributo Selecao em false ele continua na lista mas não 
     // compõem o preco total do carrinho.  E caso seja executado como pedido, ele não fará parte do
