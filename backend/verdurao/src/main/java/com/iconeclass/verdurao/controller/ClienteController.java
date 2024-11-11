@@ -62,14 +62,16 @@ public class ClienteController {
     
     
     //Fornece um endpoint para relizar um login.
-    @GetMapping("/login")
+    @PostMapping("/login")
     public Cliente loginCliente(@RequestBody Cliente cliente) {
     	Cliente clienteNaoExiste = null;
     	// tenta localizar um cliente com mesmo email e password
     	Optional<Cliente> optionalCliente = clienteRepository.findById(cliente.getEmail());
     	if (optionalCliente.isPresent()) {
     		Cliente clienteExiste = optionalCliente.get();
-    		if (clienteExiste.getSenha() == cliente.getSenha())
+    		String senha_cliente = clienteExiste.getSenha();
+    		String senha_dada = cliente.getSenha();
+    		if (senha_cliente.equals(senha_dada) )
     		{
     			clienteExiste.setSenha("");
     			return clienteExiste;
