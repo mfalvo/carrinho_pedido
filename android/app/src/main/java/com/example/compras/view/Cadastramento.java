@@ -62,7 +62,7 @@ public class Cadastramento extends AppCompatActivity {
             RetrofitClient retrofitClient = new RetrofitClient();
             ClienteAPIController clienteAPIController = new ClienteAPIController(retrofitClient);
 
-            clienteAPIController.getLoginCliente(email_cliente, nome_cliente, password01, new ClienteAPIController.ResponseCallback() {
+            clienteAPIController.setCadastraCliente(email_cliente, nome_cliente, password01, new ClienteAPIController.ResponseCallback() {
                 @Override
                 public void onSuccess(Cliente cliente) {
                     //textView.setText(user_list.getSupport().getText());
