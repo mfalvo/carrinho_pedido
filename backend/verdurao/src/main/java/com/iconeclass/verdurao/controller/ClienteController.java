@@ -274,7 +274,7 @@ public class ClienteController {
     		@PathVariable Integer selecao) {
     	
     	// Verifica se valor de selecao está dentro do intervalo aceitável
-    	if (selecao < 0 && selecao > 1 ) return ResponseEntity.notFound().build();
+    	if (selecao < 0 || selecao > 1 ) return ResponseEntity.notFound().build();
     	
         // tenta localizar cliente por seu Id
     	Optional<Cliente> optionalCliente = clienteRepository.findById(email);
@@ -329,9 +329,15 @@ public class ClienteController {
     public ResponseEntity<Cliente> insertPedidoCliente(@PathVariable String email) {
         //localiza cliente por Id email
     	Optional<Cliente> optionalCliente = clienteRepository.findById(email);
-        if (optionalCliente.isPresent()) { // cliente localizado	
-          Cliente cliente = optionalCliente.get();   // Obptem objeto Cliente
+        if (optionalCliente.isPresent()) {
+          // cliente localizado
+          Cliente cliente = optionalCliente.get();   // Obtem objeto Cliente
           Carrinho carrinho = cliente.getCarrinho(); // Obtem objeto Carrinho de Cliente
+          
+          // Se valor de carrinho de compra for zero, não será criado um pedido
+          if (carrinho.getTotal().equals(new BigDecimal(0))) return ResponseEntity.notFound().build();
+          
+          // Inicia levantamento dos itens de carrinho selecioandos para criação de pedido		  
           List<CarrinhoItem> carrinhoitens = carrinho.getCarrinhoitems(); // Obtem Lista de itens do Carrinho 
           List<PedidoItem> listaItemPedidos = new ArrayList(); // Cria lista de itens de pedido localmente
           Pedido pedido = null; // Declara variavel para receber novo objeto Pedido
@@ -371,6 +377,7 @@ public class ClienteController {
           }
           if(pedido != null ) { // Verifica se há um pedido realmente criado para concluir sua abertura
         	  carrinho.setCarrinhoitems(carrinhoitens);
+        	  carrinho.setTotal(carrinho.getTotal().subtract(total_pedido));
         	  carrinhoRepository.save(carrinho);
         	  pedido.setPedidoitens(listaItemPedidos); //  atribui a lista local de items de pedido para pedido criado
         	  pedido.setTotal(total_pedido); // atribui o valor total do pedido calculado
@@ -390,3 +397,4 @@ public class ClienteController {
  
     
 }
+
