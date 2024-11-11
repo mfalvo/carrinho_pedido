@@ -12,11 +12,15 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.compras.R;
+import com.example.compras.api.RetrofitClient;
+import com.example.compras.controller.ClienteAPIController;
+import com.example.compras.model.Cliente;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText username;
-    private EditText password ;
+    private EditText email_cliente;
+    private EditText password_cliente ;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,16 +33,44 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        this.username = findViewById(R.id.editTextTextEmailAddress);
-        this.password = findViewById(R.id.editTextTextPassword);
+        this.email_cliente = findViewById(R.id.editTextTextEmailAddress);
+        this.password_cliente = findViewById(R.id.editTextTextPassword);
     }
 
     // obtem dados de login
-    public void realizarLogin(View view){
+    public void getLogin(View view){
 
 
-        String email_user = this.username.getText().toString();
-        String password_user = this.password.getText().toString();
+        String email_cliente = this.email_cliente.getText().toString();
+        String password_cliente = this.password_cliente.getText().toString();
+
+
+        RetrofitClient retrofitClient;
+        retrofitClient = new RetrofitClient();
+
+        ClienteAPIController clienteAPIController = new ClienteAPIController(retrofitClient);
+
+        clienteAPIController.getLoginCliente(email_cliente, password_cliente, new ClienteAPIController.ResponseCallback(){
+            @Override
+            public void onSuccess(Cliente cliente) {
+                AlertDialog.Builder alerta = new AlertDialog.Builder(MainActivity.this);
+                alerta.setCancelable(false);
+                alerta.setTitle("Login");
+                alerta.setMessage(cliente.getNome());
+                alerta.setNegativeButton("Ok",null);
+                alerta.create().show();
+            }
+            @Override
+            public void onFailure(Throwable t) {
+                //Log.e("UserList", "Erro ao buscar usuários", t);
+                AlertDialog.Builder alerta = new AlertDialog.Builder(MainActivity.this);
+                alerta.setCancelable(false);
+                alerta.setTitle("Login");
+                alerta.setMessage(t.toString());
+                alerta.setNegativeButton("Falouu",null);
+                alerta.create().show();
+            }
+        });
 
 
     }
