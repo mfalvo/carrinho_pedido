@@ -9,8 +9,8 @@ import retrofit2.http.POST;
 
 public interface ClienteAPI {
 
-        @GET("/clientes/login")
-        Call<Cliente> login(@Body Cliente cliente);
+        @POST("/clientes/login")
+        Call<Cliente> loginCliente(@Body Cliente cliente);
 
         @POST("/clientes")
         Call<Cliente> cadastra(@Body Cliente cliente);
