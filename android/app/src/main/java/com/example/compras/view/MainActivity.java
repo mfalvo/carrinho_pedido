@@ -1,5 +1,6 @@
 package com.example.compras.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -15,6 +16,7 @@ import com.example.compras.R;
 import com.example.compras.api.RetrofitClient;
 import com.example.compras.controller.ClienteAPIController;
 import com.example.compras.model.Cliente;
+import com.example.compras.utils.SharedPrefManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -53,12 +55,24 @@ public class MainActivity extends AppCompatActivity {
         clienteAPIController.getLoginCliente(email_cliente, password_cliente, new ClienteAPIController.ResponseCallback(){
             @Override
             public void onSuccess(Cliente cliente) {
-                AlertDialog.Builder alerta = new AlertDialog.Builder(MainActivity.this);
-                alerta.setCancelable(false);
-                alerta.setTitle("Login");
-                alerta.setMessage(cliente.getNome());
-                alerta.setNegativeButton("Ok",null);
-                alerta.create().show();
+
+                if (!(cliente == null)) {
+                    // Compartilhamento do objeto Cliente no aplicativo
+                    SharedPrefManager sharedPrefManager = new SharedPrefManager(MainActivity.this);
+                    sharedPrefManager.saveCliente(cliente);
+                    //Chamada da interface de Produtos
+                    Intent intent = new Intent(MainActivity.this, ListaProdutos.class);
+                    startActivity(intent);
+                }
+                else {
+                    AlertDialog.Builder alerta = new AlertDialog.Builder(MainActivity.this);
+                    alerta.setCancelable(false);
+                    alerta.setTitle("Login");
+                    String menssagem = "Usuário não encontrado! Verifique seu username e password.";
+                    alerta.setMessage(menssagem);
+                    alerta.setNegativeButton("Ok", null);
+                    alerta.create().show();
+                }
             }
             @Override
             public void onFailure(Throwable t) {
@@ -67,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                 alerta.setCancelable(false);
                 alerta.setTitle("Login");
                 alerta.setMessage(t.toString());
-                alerta.setNegativeButton("Falouu",null);
+                alerta.setNegativeButton("Ok",null);
                 alerta.create().show();
             }
         });
