@@ -32,7 +32,7 @@ public class ProdutoAPIController {
         this.retrofitClient = retrofitClient;
         this.produtoAPI = RetrofitClient.getRetrofitInstance().create(ProdutoAPI.class);
     }
-    public void fetchAllProdutos(final ResponseCallback callback) {
+    public void getAllProdutos(final ResponseCallback callback) {
         Call<List<Produto>> call = produtoAPI.getListaProdutos();
         call.enqueue(new Callback<List<Produto>>() {
             @Override
