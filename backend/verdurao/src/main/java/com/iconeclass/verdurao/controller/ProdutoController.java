@@ -1,4 +1,9 @@
 package com.iconeclass.verdurao.controller;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +29,42 @@ public class ProdutoController {
 
     @GetMapping
     public Iterable<Produto> getAllProdutos() {
-        return produtoRepository.findAll();
+    	Iterable<Produto> produtos = produtoRepository.findAll();
+        for (Produto produto : produtos) {
+            if (produto.getImagem() != null) {
+                String imagePath = produto.getImagem();
+                try {
+                    Path path = Paths.get(imagePath);
+                    byte[] imageBytes = Files.readAllBytes(path);
+                    String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+                    produto.setImagem(base64Image);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    produto.setImagem(null); // Clear the image path if an error occurs
+                }
+            }
+        }
+        return produtos;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Produto> getProdutoById(@PathVariable Long id) {
-        Optional<Produto> produto = produtoRepository.findById(id);
+    	Optional<Produto> produto = produtoRepository.findById(id);
         if (produto.isPresent()) {
-            return ResponseEntity.ok(produto.get());
+            Produto p = produto.get();
+            if (p.getImagem() != null) {
+                String imagePath = p.getImagem();
+                try {
+                    Path path = Paths.get(imagePath);
+                    byte[] imageBytes = Files.readAllBytes(path);
+                    String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+                    p.setImagem(base64Image);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    p.setImagem(null); // Clear the image path if an error occurs
+                }
+            }
+            return ResponseEntity.ok(p);
         } else {
             return ResponseEntity.notFound().build();
         }
