@@ -45,7 +45,7 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.MyViewHo
             Bitmap bitmap = decodeBase64ToBitmap(produto.getImagem());
             holder.imagemImageView.setImageBitmap(bitmap);
         } else {
-            holder.imagemImageView.setImageResource(R.drawable.icons8_instagram_50); // Placeholder image
+            holder.imagemImageView.setImageResource(R.drawable.foto_instagram_50); // Placeholder image
         }
     }
 
