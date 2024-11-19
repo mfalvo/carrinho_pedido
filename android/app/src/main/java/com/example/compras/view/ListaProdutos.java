@@ -3,7 +3,8 @@ package com.example.compras.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.LinearLayout;
+import android.view.View;
+
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
@@ -66,8 +67,6 @@ public class ListaProdutos extends AppCompatActivity {
                     Log.e("ListaProdutos", "Erro ao buscar produtos", t);
             }
         });
-
-
     }
 
     private void atualizarRecyclerView() {
@@ -91,7 +90,14 @@ public class ListaProdutos extends AppCompatActivity {
         recyclerViewProdutos.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
     }
 
+    public void abrirPerfilCliente(View view){
+        Intent intent = new Intent(ListaProdutos.this, PerfilCliente.class);
+        startActivity(intent);
+    }
 
-
+    public void abriListaCarrinho(View view){
+        Intent intent = new Intent(ListaProdutos.this, ListaCarrinho.class);
+        startActivity(intent);
+    }
 
 }
