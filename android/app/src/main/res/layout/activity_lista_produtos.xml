@@ -25,6 +25,7 @@
         android:layout_height="70dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="4dp"
+        android:onClick="abriListaCarrinho"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/carrinho__carregado_50" />
@@ -49,6 +50,7 @@
         android:layout_height="70sp"
         android:layout_marginStart="8dp"
         android:layout_marginBottom="4dp"
+        android:onClick="abrirPerfilCliente"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
