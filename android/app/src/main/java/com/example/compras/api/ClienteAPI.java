@@ -6,6 +6,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface ClienteAPI {
@@ -17,12 +18,16 @@ public interface ClienteAPI {
 
         // End point que permite o cadastro de cliente.
         @POST("/clientes")
-        Call<Cliente> cadastra(@Body Cliente cliente);
+        Call<Cliente> cadastraCliente(@Body Cliente cliente);
 
         // End point que permite a obtenção do objeto cliente por email
         @GET("/clientes/{email}")
         Call<Cliente> getClienteByEmail(@Path("email") String email);
 
+        // En point que permite a alteracao de dados do cliente
+        @PUT("/clientes/{email}")
+        Call<Cliente> alteraPerfilCliente(@Path("email") String email, @Body Cliente cliente);
 
 
-    }
+
+}
