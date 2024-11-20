@@ -48,13 +48,28 @@
         android:id="@+id/imageView4"
         android:layout_width="60sp"
         android:layout_height="70sp"
-        android:layout_marginStart="8dp"
         android:layout_marginBottom="4dp"
         android:onClick="abrirPerfilCliente"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageView3"
+        app:layout_constraintStart_toEndOf="@+id/imageView4a"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/perfil" />
+
+    <ImageView
+        android:id="@+id/imageView4a"
+        android:layout_width="60dp"
+        android:layout_height="70sp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="4dp"
+        android:onClick="sairProduto"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/recyclerViewProdutos"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@android:drawable/ic_lock_power_off" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
