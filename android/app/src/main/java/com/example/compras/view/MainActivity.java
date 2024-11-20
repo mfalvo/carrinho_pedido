@@ -1,5 +1,7 @@
 package com.example.compras.view;
 
+import static java.lang.System.exit;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -37,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
 
         this.email_cliente = findViewById(R.id.editTextTextEmailAddress);
         this.password_cliente = findViewById(R.id.editTextTextPassword);
+
+
+
     }
 
     // obtem dados de login
@@ -85,21 +90,24 @@ public class MainActivity extends AppCompatActivity {
                 alerta.create().show();
             }
         });
-
-
     }
 
-    public void recuperarSenha(View view) {
-        // TODO: implementar rotina de recuperação de senha
-        Integer X = 100;
-        Integer Y = 200;
-        Integer Z = X + Y;
-    }
+
 
     public void realizarCadastramento(View view){
         // TODO: implementar rotina de cadastramento de novo usuário
-        Integer X = 100;
-        Integer Y = 200;
-        Integer Z = X + Y;
+        Intent intent = new Intent(MainActivity.this, PerfilCliente.class);
+        startActivity(intent);
     }
+
+    public void sair(View view){
+        SharedPrefManager sharedPrefManager = new SharedPrefManager(MainActivity.this);
+        sharedPrefManager.resetKeys();
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
+
 }
