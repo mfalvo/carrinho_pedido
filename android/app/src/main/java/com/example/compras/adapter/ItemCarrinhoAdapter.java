@@ -14,15 +14,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.compras.R;
 import com.example.compras.model.CarrinhoItem;
+import com.example.compras.model.Produto;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public class ItemCarrinhoAdapter extends RecyclerView.Adapter<ItemCarrinhoAdapter.MyViewHolder>{
     private List<CarrinhoItem> listaCarrinhoItem;
-    public ItemCarrinhoAdapter(List<CarrinhoItem> listaCarrinho){
+    private List<Produto> listaProdutos;
+    public ItemCarrinhoAdapter(List<CarrinhoItem> listaCarrinho, List<Produto> listaProdutos){
 
         this.listaCarrinhoItem = listaCarrinho;
+        this.listaProdutos = listaProdutos;
     }
 
     @NonNull
@@ -38,6 +42,17 @@ public class ItemCarrinhoAdapter extends RecyclerView.Adapter<ItemCarrinhoAdapte
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         CarrinhoItem carrinhoItem = this.listaCarrinhoItem.get(position);
+        Long idDeBusca = carrinhoItem.getProduto().getId();
+        Optional<Produto> produtoOptional = listaProdutos.stream()
+                .filter(produto -> produto.getId().equals(idDeBusca))
+                .findFirst();
+
+        // Obtem imagem direto da lista de produtos do aplicativo
+        if (produtoOptional.isPresent()) {
+            Produto produtoEncontrado = produtoOptional.get();
+            carrinhoItem.getProduto().setImagem(produtoEncontrado.getImagem());
+        }
+
         holder.nomeItemCarrinho.setText(carrinhoItem.getProduto().getNome());
         holder.precoItemCarrinho.setText(carrinhoItem.getPreco().toString());
         holder.descricaoItemCarrinho.setText(carrinhoItem.getProduto().getDescricao());
