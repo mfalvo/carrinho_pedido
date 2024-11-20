@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 public class SharedPrefManager {
     private static final String PREF_NAME = "MyPrefs";
     private static final String KEY_CLIENTE = "Cliente";
+    private static final String KEY_LPRODUTOS = "LProdutos";
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private Gson gson;
@@ -25,13 +26,37 @@ public class SharedPrefManager {
         editor.apply();
     }
 
+    public void saveLProdutos(LProdutos listaProdutos){
+        String json = gson.toJson(listaProdutos);
+        editor.putString(KEY_LPRODUTOS, json);
+        editor.apply();
+
+    }
+
     public Cliente getCliente() {
-        String json = sharedPreferences.getString(KEY_CLIENTE, null);
-        return gson.fromJson(json, Cliente.class);
+        boolean clienteLogado = !(sharedPreferences.getString(KEY_CLIENTE, null).equals("Cliente"));
+        if (clienteLogado){
+            String json = sharedPreferences.getString(KEY_CLIENTE, null);
+            return gson.fromJson(json, Cliente.class);}
+        return null;
+    }
+
+    public LProdutos getLProdutos() {
+        String json = sharedPreferences.getString(KEY_LPRODUTOS, null);
+        return gson.fromJson(json, LProdutos.class);
     }
 
     public void clear() {
         editor.clear();
+        editor.apply();
+    }
+
+    public void resetKeys() {
+        String keyLProdutos = "LProdutos";
+        String keyCliente = "Cliente";
+        editor.putString(KEY_LPRODUTOS, keyLProdutos);
+        editor.apply();
+        editor.putString(KEY_CLIENTE, keyCliente);
         editor.apply();
     }
 }
