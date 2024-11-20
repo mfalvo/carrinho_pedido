@@ -54,11 +54,40 @@ public class ClienteAPIController {
             }
         });
     }
-
     // API de Cadastramento de Cliente
-    public void setCadastraCliente(String email, String nome, String password,
-                                   ClienteAPIController.ResponseCallback responseCallback){}
+    public void cadastraCliente(Cliente cliente,
+                                   ClienteAPIController.ResponseCallback responseCallback){
 
+        Call<Cliente> call = this.clienteAPI.cadastraCliente(cliente);
+        call.enqueue(new Callback<Cliente>() {
+            @Override
+            public void onResponse(Call<Cliente> call, Response<Cliente> response) {
+                responseCallback.onSuccess(response.body());
+            }
+            @Override
+            public void onFailure(Call<Cliente> call, Throwable t) {
+                responseCallback.onFailure(new Exception("Request failed"));
+            }
+        });
+    };
+    // API de Alteracao de perfil de Cliente
+    public void alteraPerfilCliente (String email, Cliente cliente,
+                                     ClienteAPIController.ResponseCallback responseCallback){
+
+        Call<Cliente> call = this.clienteAPI.alteraPerfilCliente(email,cliente);
+        call.enqueue(new Callback<Cliente>() {
+            @Override
+            public void onResponse(Call<Cliente> call, Response<Cliente> response) {
+                responseCallback.onSuccess(response.body());
+            }
+            @Override
+            public void onFailure(Call<Cliente> call, Throwable t) {
+                responseCallback.onFailure(new Exception("Request failed"));
+            }
+        });
+
+    }
+    // API de Busca de Cliente por email
     public void getClienteByEmail(String email,
                                 ClienteAPIController.ResponseCallback responseCallback) {
 
