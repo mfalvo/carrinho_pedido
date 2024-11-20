@@ -1,12 +1,13 @@
 package com.example.compras.view;
 
+import static java.lang.System.exit;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -19,13 +20,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.compras.R;
 import com.example.compras.adapter.ProdutoAdapter;
 import com.example.compras.api.RetrofitClient;
-import com.example.compras.controller.ClienteAPIController;
 import com.example.compras.controller.ProdutoAPIController;
-import com.example.compras.model.Cliente;
+import com.example.compras.utils.LProdutos;
 import com.example.compras.model.Produto;
 import com.example.compras.utils.SharedPrefManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ListaProdutos extends AppCompatActivity {
@@ -55,6 +54,11 @@ public class ListaProdutos extends AppCompatActivity {
             @Override
             public void onSuccess(List<Produto> produtos) {
                     if (produtos != null && !produtos.isEmpty()) {
+
+                        LProdutos lProdutos = new LProdutos();
+                        lProdutos.setLProdutos(produtos);
+                        SharedPrefManager sharedPrefManager = new SharedPrefManager(ListaProdutos.this);
+                        sharedPrefManager.saveLProdutos(lProdutos);
                         listaProdutos = produtos;
                         atualizarRecyclerView();
                     } else {
@@ -98,6 +102,16 @@ public class ListaProdutos extends AppCompatActivity {
     public void abriListaCarrinho(View view){
         Intent intent = new Intent(ListaProdutos.this, ListaCarrinho.class);
         startActivity(intent);
+    }
+
+    public void sairProduto(View view){
+        SharedPrefManager sharedPrefManager = new SharedPrefManager(ListaProdutos.this);
+        sharedPrefManager.resetKeys();
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+
     }
 
 }
