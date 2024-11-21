@@ -170,7 +170,7 @@ public class ClienteController {
     
     // AÇÕES NO CARRINHO E CARRINHO ITEM /////////////////////////////////
     //Fornece um endpoint para adicionar produto no carrinho de cliente
-    @PutMapping("{email}/addItemCarribo/{idproduto}/{quant}") 
+    @PutMapping("{email}/addItemCarrinho/{idproduto}/{quant}") 
     public ResponseEntity<Cliente> Cliente(@PathVariable String email, @PathVariable Long idproduto,  
     		@PathVariable Integer quant) {
         // tenta localizar Cliente
