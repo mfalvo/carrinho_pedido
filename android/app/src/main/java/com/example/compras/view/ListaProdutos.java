@@ -1,7 +1,6 @@
 package com.example.compras.view;
 
-import static java.lang.System.exit;
-
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,8 +18,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.compras.R;
 import com.example.compras.adapter.ProdutoAdapter;
+import com.example.compras.adapter.ProdutoAdapter.MyViewHolder;
 import com.example.compras.api.RetrofitClient;
+import com.example.compras.controller.ClienteAPIController;
 import com.example.compras.controller.ProdutoAPIController;
+import com.example.compras.model.Cliente;
 import com.example.compras.utils.LProdutos;
 import com.example.compras.model.Produto;
 import com.example.compras.utils.SharedPrefManager;
@@ -31,6 +33,8 @@ public class ListaProdutos extends AppCompatActivity {
 
     private RecyclerView recyclerViewProdutos;
     private List<Produto> listaProdutos;
+
+    private String emailCliente;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +53,10 @@ public class ListaProdutos extends AppCompatActivity {
         RetrofitClient retrofitClient;
         retrofitClient = new RetrofitClient();
 
+        SharedPrefManager sharedPrefManager = new SharedPrefManager(ListaProdutos.this);
+        Cliente cliente = sharedPrefManager.getCliente();
+        this.emailCliente = cliente.getEmail();
+
         ProdutoAPIController produtoAPIController = new ProdutoAPIController(retrofitClient);
         produtoAPIController.getAllProdutos( new ProdutoAPIController.ResponseCallback(){
             @Override
@@ -57,35 +65,25 @@ public class ListaProdutos extends AppCompatActivity {
 
                         LProdutos lProdutos = new LProdutos();
                         lProdutos.setLProdutos(produtos);
-                        SharedPrefManager sharedPrefManager = new SharedPrefManager(ListaProdutos.this);
                         sharedPrefManager.saveLProdutos(lProdutos);
                         listaProdutos = produtos;
                         atualizarRecyclerView();
                     } else {
-                        mostrarMensagemErro("Nenhum produto encontrado!");
+                        avisoLocal("Nenhum produto encontrado!");
                     }
             }
             @Override
             public void onFailure(Throwable t) {
-                    mostrarMensagemErro("Erro ao buscar produtos: " + t.getMessage());
-                    Log.e("ListaProdutos", "Erro ao buscar produtos", t);
+                   avisoLocal("Erro ao buscar produtos: " + t.getMessage());
             }
         });
     }
 
     private void atualizarRecyclerView() {
-        ProdutoAdapter adapter = new ProdutoAdapter(listaProdutos);
+        ProdutoAdapter adapter = new ProdutoAdapter(ListaProdutos.this,this.emailCliente,listaProdutos);
         recyclerViewProdutos.setAdapter(adapter);
     }
 
-    private void mostrarMensagemErro(String mensagem) {
-        AlertDialog.Builder alerta = new AlertDialog.Builder(this);
-        alerta.setCancelable(false);
-        alerta.setTitle("Erro");
-        alerta.setMessage(mensagem);
-        alerta.setNegativeButton("Ok", null);
-        alerta.create().show();
-    }
 
     private void configurarRecyclerView() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -93,6 +91,16 @@ public class ListaProdutos extends AppCompatActivity {
         recyclerViewProdutos.setHasFixedSize(true);
         recyclerViewProdutos.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
     }
+
+    private void avisoLocal(String aviso) {
+        AlertDialog.Builder alerta = new AlertDialog.Builder(ListaProdutos.this);
+        alerta.setCancelable(false);
+        alerta.setTitle("Aviso");
+        alerta.setMessage(aviso);
+        alerta.setNegativeButton("Ok", null);
+        alerta.create().show();
+    }
+
 
     public void abrirPerfilCliente(View view){
         Intent intent = new Intent(ListaProdutos.this, PerfilCliente.class);
@@ -113,5 +121,6 @@ public class ListaProdutos extends AppCompatActivity {
         startActivity(intent);
 
     }
+
 
 }
