@@ -25,6 +25,7 @@ import com.example.compras.controller.ProdutoAPIController;
 import com.example.compras.model.CarrinhoItem;
 import com.example.compras.model.Cliente;
 import com.example.compras.model.Produto;
+import com.example.compras.utils.LProdutos;
 import com.example.compras.utils.SharedPrefManager;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class ListaCarrinho extends AppCompatActivity {
 
     private RecyclerView recyclerViewCarrinho;
     private List<CarrinhoItem> listaCarrinho;
+    private List<Produto> listaProdutos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,8 @@ public class ListaCarrinho extends AppCompatActivity {
 
         SharedPrefManager sharedPrefManager = new SharedPrefManager(ListaCarrinho.this);
         Cliente cliente = sharedPrefManager.getCliente();
+        LProdutos lprodutos = sharedPrefManager.getLProdutos();
+        this.listaProdutos = lprodutos.getLProdutos();
 
         RetrofitClient retrofitClient;
         retrofitClient = new RetrofitClient();
@@ -78,7 +82,7 @@ public class ListaCarrinho extends AppCompatActivity {
     }
 
     private void atualizarRecyclerView() {
-        ItemCarrinhoAdapter adapter = new ItemCarrinhoAdapter(listaCarrinho);
+        ItemCarrinhoAdapter adapter = new ItemCarrinhoAdapter(listaCarrinho, listaProdutos);
         recyclerViewCarrinho.setAdapter(adapter);
     }
 
@@ -101,6 +105,10 @@ public class ListaCarrinho extends AppCompatActivity {
     public void abrirPerfilCliente(View view){
         Intent intent = new Intent(ListaCarrinho.this, PerfilCliente.class);
         startActivity(intent);
+    }
+
+    public void fecharCarrinhoItem(View view){
+        finish();
     }
 
 }
