@@ -90,8 +90,6 @@ public class ClienteAPIController {
     // API de Busca de Cliente por email
     public void getClienteByEmail(String email,
                                 ClienteAPIController.ResponseCallback responseCallback) {
-
-
         Call<Cliente> call = this.clienteAPI.getClienteByEmail(email);
         call.enqueue(new Callback<Cliente>() {
             @Override
@@ -104,4 +102,20 @@ public class ClienteAPIController {
             }
         });
     }
+    // API que adiciona um produto no carrinho do cliente
+    public void adicionaProdutoNoCarrinho(String email, long idProduto, int quant,
+                                          ClienteAPIController.ResponseCallback responseCallback){
+        Call<Cliente> call = this.clienteAPI.adicionaProdutoNoCarrinho(email,idProduto,quant);
+        call.enqueue(new Callback<Cliente>() {
+            @Override
+            public void onResponse(Call<Cliente> call, Response<Cliente> response) {
+                responseCallback.onSuccess(response.body());
+            }
+            @Override
+            public void onFailure(Call<Cliente> call, Throwable t) {
+                responseCallback.onFailure(new Exception("Request failed"));
+            }
+        });
+    }
+
 }
