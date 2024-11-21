@@ -28,6 +28,11 @@ public interface ClienteAPI {
         @PUT("/clientes/{email}")
         Call<Cliente> alteraPerfilCliente(@Path("email") String email, @Body Cliente cliente);
 
+        @PUT("/clientes/{email}/addItemCarrinho/{idproduto}/{quant}")
+        Call<Cliente> adicionaProdutoNoCarrinho(@Path("email") String email,
+                                                @Path("idproduto") long idproduto,
+                                                @Path("quant") int quant);
+
 
 
 }
