@@ -118,4 +118,22 @@ public class ClienteAPIController {
         });
     }
 
+
+    // API que altera a quantidade de um produto que está no carrinho do cliente
+    public void alteraProdutoDoCarrinho(String email, long idProduto, int quant,
+                                          ClienteAPIController.ResponseCallback responseCallback){
+        Call<Cliente> call = this.clienteAPI.alteraProdutoDoCarrinho(email,idProduto,quant);
+        call.enqueue(new Callback<Cliente>() {
+            @Override
+            public void onResponse(Call<Cliente> call, Response<Cliente> response) {
+                responseCallback.onSuccess(response.body());
+            }
+            @Override
+            public void onFailure(Call<Cliente> call, Throwable t) {
+                responseCallback.onFailure(new Exception("Request failed"));
+            }
+        });
+    }
+
+
 }
