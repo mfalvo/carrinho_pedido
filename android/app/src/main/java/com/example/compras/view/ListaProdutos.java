@@ -34,7 +34,7 @@ public class ListaProdutos extends AppCompatActivity {
     private RecyclerView recyclerViewProdutos;
     private List<Produto> listaProdutos;
 
-    private String emailCliente;
+    private Cliente clienteLogado;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +54,8 @@ public class ListaProdutos extends AppCompatActivity {
         retrofitClient = new RetrofitClient();
 
         SharedPrefManager sharedPrefManager = new SharedPrefManager(ListaProdutos.this);
-        Cliente cliente = sharedPrefManager.getCliente();
-        this.emailCliente = cliente.getEmail();
+        this.clienteLogado = sharedPrefManager.getCliente();
+
 
         ProdutoAPIController produtoAPIController = new ProdutoAPIController(retrofitClient);
         produtoAPIController.getAllProdutos( new ProdutoAPIController.ResponseCallback(){
@@ -80,7 +80,7 @@ public class ListaProdutos extends AppCompatActivity {
     }
 
     private void atualizarRecyclerView() {
-        ProdutoAdapter adapter = new ProdutoAdapter(ListaProdutos.this,this.emailCliente,listaProdutos);
+        ProdutoAdapter adapter = new ProdutoAdapter(ListaProdutos.this, this.clienteLogado, listaProdutos);
         recyclerViewProdutos.setAdapter(adapter);
     }
 
