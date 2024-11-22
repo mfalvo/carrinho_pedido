@@ -24,15 +24,19 @@ public interface ClienteAPI {
         @GET("/clientes/{email}")
         Call<Cliente> getClienteByEmail(@Path("email") String email);
 
-        // En point que permite a alteracao de dados do cliente
+        // End point que permite a alteracao de dados do cliente
         @PUT("/clientes/{email}")
         Call<Cliente> alteraPerfilCliente(@Path("email") String email, @Body Cliente cliente);
 
+        // End point que permite adição de um produto no carrinho
         @PUT("/clientes/{email}/addItemCarrinho/{idproduto}/{quant}")
         Call<Cliente> adicionaProdutoNoCarrinho(@Path("email") String email,
                                                 @Path("idproduto") long idproduto,
                                                 @Path("quant") int quant);
 
-
-
+        // End point que permite a alteracao da quantidade de um produto do carrinho
+        @PUT("clientes/{email}/alteraCarrinhoItem/{carrinhoitemid}/{quant}")
+        Call<Cliente> alteraProdutoDoCarrinho(@Path("email") String email,
+                                              @Path("carrinhoitemid") long carrinhoitemid,
+                                              @Path("quant") int quant);
 }
