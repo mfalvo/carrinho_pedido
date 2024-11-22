@@ -17,22 +17,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.compras.R;
 import com.example.compras.api.RetrofitClient;
 import com.example.compras.controller.ClienteAPIController;
+import com.example.compras.model.CarrinhoItem;
 import com.example.compras.model.Cliente;
 import com.example.compras.model.Produto;
-import com.example.compras.utils.SharedPrefManager;
-import com.example.compras.view.ListaProdutos;
 
 import java.util.List;
 
 
 public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.MyViewHolder>{
     private List<Produto> listaProdutos;
-    private String emailCliente;
+    private Cliente clienteLogado;
 
     private Context context;
-    public ProdutoAdapter(Context context, String email, List<Produto> listaprodutos){
+    public ProdutoAdapter(Context context, Cliente cliente, List<Produto> listaprodutos){
         this.context = context;
-        this.emailCliente = email;
+        this.clienteLogado = cliente;
         this.listaProdutos = listaprodutos;
     }
 
@@ -49,7 +48,6 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.MyViewHo
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Produto produto = listaProdutos.get(position);
-        holder.idProduto.setText(Long.toString(produto.getId()));
         holder.nomeProduto.setText(produto.getNome());
         holder.precoProduto.setText(produto.getPreco().toString());
         holder.descricaoProduto.setText(produto.getDescricao());
@@ -80,19 +78,67 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.MyViewHo
     }
 
     public void adicionarProdutoNoCarrinho(View view, int position) {
-
+        // Obtem o id do produto que será adicionado no carrinho
         Produto produto = listaProdutos.get(position);
         long idProduto = produto.getId();
-        adicionarNoCarrinho(view, this.emailCliente, idProduto, 1);
+        // Obtem Lista de itens de carrinho de clienteLogado
+        List<CarrinhoItem> listaCarrinho = this.clienteLogado.getCarrinho().getCarrinhoitems();
+        // Verifica se produto adicionado já se encontra como um dos itens do carrinho
+        CarrinhoItem  itemCarrinho = localizaProdutoNoCarrinho(listaCarrinho, idProduto);
+        if (itemCarrinho == null) {
+            // Se o produto não for encontrado, este é adicionado no carrinho
+            adicionarNoCarrinho(view, idProduto, 1);
+        } else {
+            // Se já houver o mesmo produto adicionado, no carrinho sua quantidade será incrementada
+            long idItemCarrinho = itemCarrinho.getId();
+            int quant = itemCarrinho.getQuantidade();
+            String email = this.clienteLogado.getEmail();
+            quant = quant + 1;
+            alterarItemDoCarrinho(view, idItemCarrinho, quant);
+        }
     }
 
+    public CarrinhoItem localizaProdutoNoCarrinho(List<CarrinhoItem> listaCarrinho, Long idProduto) {
+        for (CarrinhoItem item : listaCarrinho) {
+            if (item.getProduto().getId().equals(idProduto)) {
+                return item;
+            }
+        }
+        return null;
+    }
 
-    private void adicionarNoCarrinho(View view, String email, long idproduto, int quant){
+    private void adicionarNoCarrinho(View view, long idproduto, int quant){
         RetrofitClient retrofitClient;
         retrofitClient = new RetrofitClient();
 
+        String email = clienteLogado.getEmail();
+
         ClienteAPIController clienteAPIController = new ClienteAPIController(retrofitClient);
         clienteAPIController.adicionaProdutoNoCarrinho( email, idproduto, quant, new ClienteAPIController.ResponseCallback(){
+            @Override
+            public void onSuccess(Cliente cliente) {
+                if (cliente != null) {
+                    avisoLocal(view,"Produto adicionado com sucesso!");
+                } else {
+                    avisoLocal(view,"Nenhum produto encontrado!");
+                }
+            }
+            @Override
+            public void onFailure(Throwable t) {
+                avisoLocal(view,"Erro ao buscar produtos: " + t.getMessage());
+                Log.e("ListaProdutos", "Erro ao buscar produtos", t);
+            }
+        });
+    }
+
+    private void alterarItemDoCarrinho(View view, long idItemCarrinho, int quant){
+        RetrofitClient retrofitClient;
+        retrofitClient = new RetrofitClient();
+
+        String email = clienteLogado.getEmail();
+
+        ClienteAPIController clienteAPIController = new ClienteAPIController(retrofitClient);
+        clienteAPIController.alteraProdutoDoCarrinho( email, idItemCarrinho, quant, new ClienteAPIController.ResponseCallback(){
             @Override
             public void onSuccess(Cliente cliente) {
                 if (cliente != null) {
@@ -128,7 +174,6 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.MyViewHo
 
     ///// Classe MyViewHolder
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        public TextView idProduto;
         TextView nomeProduto;
         TextView precoProduto;
         TextView descricaoProduto;
@@ -136,7 +181,6 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.MyViewHo
         public ImageView imageAdicionaNoCarrinho;
         public MyViewHolder(View itemView){
             super(itemView);
-            idProduto = itemView.findViewById(R.id.idProdutoXXX);
             nomeProduto = itemView.findViewById(R.id.nomeProduto);
             precoProduto = itemView.findViewById(R.id.precoProduto);
             descricaoProduto = itemView.findViewById(R.id.descricaoProduto);
@@ -144,6 +188,4 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.MyViewHo
             imageAdicionaNoCarrinho = itemView.findViewById(R.id.imageAdicionarCarrinho);
         }
     }
-
-
 }
