@@ -1,8 +1,10 @@
 package com.example.compras.adapter;
 
 
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.compras.R;
@@ -61,13 +64,28 @@ public class ItemCarrinhoAdapter extends RecyclerView.Adapter<ItemCarrinhoAdapte
         subtotal = carrinhoItem.getPreco().multiply(new BigDecimal(carrinhoItem.getQuantidade()));
         holder.subtotalItemCarrinho.setText(subtotal.toString());
         holder.descricaoItemCarrinho.setText(carrinhoItem.getProduto().getDescricao());
-
         if (carrinhoItem.getProduto().getImagem() != null && !carrinhoItem.getProduto().getImagem().isEmpty()) {
             Bitmap bitmap = decodeBase64ToBitmap(carrinhoItem.getProduto().getImagem());
             holder.imagemItemCarrinho.setImageBitmap(bitmap);
         } else {
             holder.imagemItemCarrinho.setImageResource(R.drawable.foto_instagram_50); // Placeholder image
         }
+
+        holder.selecaoItemCarrinho.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { mudarEstadoSelecaoItemCarrinho(v, holder, position); }
+        });
+
+        holder.incrementaItemCarrinho.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { incdecItemCarrinho(1,v, holder, position); }
+        });
+
+        holder.decrementaItemCarrinho.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { incdecItemCarrinho(-1,v, holder, position); }
+        });
+
     }
 
     @Override
@@ -75,6 +93,31 @@ public class ItemCarrinhoAdapter extends RecyclerView.Adapter<ItemCarrinhoAdapte
         return this.listaCarrinhoItem.size();
     }
 
+    public void mudarEstadoSelecaoItemCarrinho(View v, MyViewHolder holder, int position){
+        if (this.listaCarrinhoItem.get(position).isSelecionado()){
+            this.listaCarrinhoItem.get(position).setSelecionado(false);
+            // Supondo que holder seja um ViewHolder dentro de um Adapter
+            Drawable drawable = ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.toggle_off);
+            holder.selecaoItemCarrinho.setImageDrawable(drawable);
+
+        }else{
+            this.listaCarrinhoItem.get(position).setSelecionado(true);
+            Drawable drawable = ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.toggle_on);
+            holder.selecaoItemCarrinho.setImageDrawable(drawable);
+        }
+
+    }
+
+    public void incdecItemCarrinho(int delta, View v, MyViewHolder holder, int position){
+        int quantItemCarrinho = this.listaCarrinhoItem.get(position).getQuantidade();
+        if (quantItemCarrinho > 0 || delta>0) {
+            quantItemCarrinho = quantItemCarrinho + delta;
+            this.listaCarrinhoItem.get(position).setQuantidade(quantItemCarrinho);
+            holder.quantidadeItemCarrinho.setText(Integer.toString(quantItemCarrinho));
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////
     public class MyViewHolder extends RecyclerView.ViewHolder{
         TextView nomeItemCarrinho;
         ImageView selecaoItemCarrinho;
