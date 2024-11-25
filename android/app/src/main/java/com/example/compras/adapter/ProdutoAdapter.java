@@ -61,15 +61,13 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.MyViewHo
             holder.imagemImageView.setImageResource(R.drawable.foto_instagram_50); // Placeholder image
         }
 
+        // Chamadas de métodos em resposta aos onClicks
         holder.imageAdicionaNoCarrinho.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                // Check if the view is null before accessing its properties
-                if (v != null) {
-                    adicionarProdutoNoCarrinho(v, position);
-                }
-            }
+            public void onClick(View v) { adicionarProdutoNoCarrinho(v, position); }
         });
+
+
     }
 
     @Override
