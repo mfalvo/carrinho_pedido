@@ -27,10 +27,14 @@ import java.util.Optional;
 public class ItemCarrinhoAdapter extends RecyclerView.Adapter<ItemCarrinhoAdapter.MyViewHolder>{
     private List<CarrinhoItem> listaCarrinhoItem;
     private List<Produto> listaProdutos;
-    public ItemCarrinhoAdapter(List<CarrinhoItem> listaCarrinho, List<Produto> listaProdutos){
+    private TextView textViewTotalCarrinho;
+    private BigDecimal totalCarrinho;
+    public ItemCarrinhoAdapter(TextView totalCarrinho, List<CarrinhoItem> listaCarrinho, List<Produto> listaProdutos){
 
+        this.textViewTotalCarrinho = totalCarrinho;
         this.listaCarrinhoItem = listaCarrinho;
         this.listaProdutos = listaProdutos;
+        calcaluarTotalCarrinho();
     }
 
     @NonNull
@@ -94,27 +98,66 @@ public class ItemCarrinhoAdapter extends RecyclerView.Adapter<ItemCarrinhoAdapte
     }
 
     public void mudarEstadoSelecaoItemCarrinho(View v, MyViewHolder holder, int position){
-        if (this.listaCarrinhoItem.get(position).isSelecionado()){
-            this.listaCarrinhoItem.get(position).setSelecionado(false);
+        CarrinhoItem item = this.listaCarrinhoItem.get(position);
+        if (item.isSelecionado()){
+            item.setSelecionado(false);
             // Supondo que holder seja um ViewHolder dentro de um Adapter
             Drawable drawable = ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.toggle_off);
             holder.selecaoItemCarrinho.setImageDrawable(drawable);
-
+            int quant = item.getQuantidade();
+            BigDecimal preco = item.getPreco();
+            BigDecimal subTotal = preco.multiply(new BigDecimal(-quant));
+            atualizaTotalCarrinho(subTotal);
+            holder.subtotalItemCarrinho.setText("- * -");
         }else{
             this.listaCarrinhoItem.get(position).setSelecionado(true);
             Drawable drawable = ContextCompat.getDrawable(holder.itemView.getContext(), R.drawable.toggle_on);
             holder.selecaoItemCarrinho.setImageDrawable(drawable);
+            int quant = item.getQuantidade();
+            BigDecimal preco = item.getPreco();
+            BigDecimal subTotal = preco.multiply(new BigDecimal(quant));
+            holder.subtotalItemCarrinho.setText("R$ "+subTotal.toString());
+            atualizaTotalCarrinho(subTotal);
         }
-
     }
 
     public void incdecItemCarrinho(int delta, View v, MyViewHolder holder, int position){
-        int quantItemCarrinho = this.listaCarrinhoItem.get(position).getQuantidade();
-        if (quantItemCarrinho > 0 || delta>0) {
-            quantItemCarrinho = quantItemCarrinho + delta;
-            this.listaCarrinhoItem.get(position).setQuantidade(quantItemCarrinho);
-            holder.quantidadeItemCarrinho.setText(Integer.toString(quantItemCarrinho));
+
+        if (this.listaCarrinhoItem.get(position).isSelecionado()) {
+            int quantItemCarrinho = this.listaCarrinhoItem.get(position).getQuantidade();
+            if (quantItemCarrinho > 0 || delta > 0) {
+                quantItemCarrinho = quantItemCarrinho + delta;
+                this.listaCarrinhoItem.get(position).setQuantidade(quantItemCarrinho);
+                holder.quantidadeItemCarrinho.setText(Integer.toString(this.listaCarrinhoItem.get(position).getQuantidade()));
+
+                // Atualiza SubTotal
+                BigDecimal preco = this.listaCarrinhoItem.get(position).getPreco();
+                BigDecimal subTotal = preco.multiply(new BigDecimal(this.listaCarrinhoItem.get(position).getQuantidade()));
+                holder.subtotalItemCarrinho.setText(subTotal.toString());
+                // Atualiza Total Carrinho
+                BigDecimal variacaoPreco = preco.multiply(new BigDecimal(delta));
+                atualizaTotalCarrinho(variacaoPreco);
+            }
+
         }
+    }
+
+    public void calcaluarTotalCarrinho(){
+        this.totalCarrinho= new BigDecimal(0);
+        for (CarrinhoItem item: this.listaCarrinhoItem){
+            if (item.isSelecionado()) {
+                int quant = item.getQuantidade();
+                BigDecimal preco = item.getPreco();
+                BigDecimal subTotal = preco.multiply(new BigDecimal(quant));
+                this.totalCarrinho = this.totalCarrinho.add(subTotal);
+                this.textViewTotalCarrinho.setText(this.totalCarrinho.toString());
+            }
+        }
+    }
+
+    public void atualizaTotalCarrinho(BigDecimal valor){
+        this.totalCarrinho = totalCarrinho.add(valor);
+        this.textViewTotalCarrinho.setText(totalCarrinho.toString());
     }
 
     /////////////////////////////////////////////////////////////////////

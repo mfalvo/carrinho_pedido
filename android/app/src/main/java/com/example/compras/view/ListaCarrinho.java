@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 
 import androidx.appcompat.app.AlertDialog;
@@ -37,6 +38,8 @@ public class ListaCarrinho extends AppCompatActivity {
     private List<CarrinhoItem> listaCarrinho;
     private List<Produto> listaProdutos;
 
+    public TextView totalCarrinho;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +51,7 @@ public class ListaCarrinho extends AppCompatActivity {
             return insets;
         });
 
+        this.totalCarrinho = findViewById(R.id.totalCarrinho);
         this.recyclerViewCarrinho = findViewById(R.id.recyclerViewCarrinho);
         configurarRecyclerView();
 
@@ -82,7 +86,7 @@ public class ListaCarrinho extends AppCompatActivity {
     }
 
     private void atualizarRecyclerView() {
-        ItemCarrinhoAdapter adapter = new ItemCarrinhoAdapter(listaCarrinho, listaProdutos);
+        ItemCarrinhoAdapter adapter = new ItemCarrinhoAdapter(this.totalCarrinho, listaCarrinho, listaProdutos);
         recyclerViewCarrinho.setAdapter(adapter);
     }
 
