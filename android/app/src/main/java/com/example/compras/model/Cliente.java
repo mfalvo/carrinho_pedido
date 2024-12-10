@@ -6,7 +6,7 @@ import java.util.List;
 public class Cliente {
 
     private String email; // Chave primaria
-    private Carrinho carrinho;
+    private Carrinho carrinho = new Carrinho();
     private List<Pedido> pedidos = new ArrayList<>();
     private String senha;
     private String nome;
@@ -16,11 +16,9 @@ public class Cliente {
     public Cliente() {
     }
 
-    public Cliente(String email, Carrinho carrinho, List<Pedido> pedidos,
-                   String senha, String nome, String imagem) {
+    public Cliente(String email, String senha, String nome, String imagem) {
+
         this.email = email;
-        this.carrinho = carrinho;
-        this.pedidos = pedidos;
         this.senha = senha;
         this.nome = nome;
         this.imagem = imagem;

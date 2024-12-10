@@ -172,6 +172,8 @@ public class PerfilCliente extends AppCompatActivity {
             @Override
             public void onSuccess(Cliente cliente) {
                 if (cliente != null) {
+                    SharedPrefManager sharedPrefManager = new SharedPrefManager(PerfilCliente.this);
+                    sharedPrefManager.saveCliente(cliente);
                     avisoLocal("Cadastro realizado com sucesso!!");
                     finish();
                 }

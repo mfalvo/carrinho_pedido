@@ -17,10 +17,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.compras.R;
 import com.example.compras.api.RetrofitClient;
 import com.example.compras.controller.ClienteAPIController;
+import com.example.compras.model.Carrinho;
 import com.example.compras.model.CarrinhoItem;
 import com.example.compras.model.Cliente;
 import com.example.compras.model.Produto;
+import com.example.compras.utils.SharedPrefManager;
+import com.example.compras.view.MainActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -80,6 +84,7 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.MyViewHo
         Produto produto = listaProdutos.get(position);
         long idProduto = produto.getId();
         // Obtem Lista de itens de carrinho de clienteLogado
+
         List<CarrinhoItem> listaCarrinho = this.clienteLogado.getCarrinho().getCarrinhoitems();
         // Verifica se produto adicionado já se encontra como um dos itens do carrinho
         CarrinhoItem  itemCarrinho = localizaProdutoNoCarrinho(listaCarrinho, idProduto);
@@ -117,6 +122,8 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.MyViewHo
             public void onSuccess(Cliente cliente) {
                 if (cliente != null) {
                     avisoLocal(view,"Produto adicionado com sucesso!");
+                    SharedPrefManager sharedPrefManager = new SharedPrefManager(context);
+                    sharedPrefManager.saveCliente(cliente);
                 } else {
                     avisoLocal(view,"Nenhum produto encontrado!");
                 }
@@ -140,6 +147,8 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.MyViewHo
             @Override
             public void onSuccess(Cliente cliente) {
                 if (cliente != null) {
+                    SharedPrefManager sharedPrefManager = new SharedPrefManager(context);
+                    sharedPrefManager.saveCliente(cliente);
                     avisoLocal(view,"Produto adicionado com sucesso!");
                 } else {
                     avisoLocal(view,"Nenhum produto encontrado!");

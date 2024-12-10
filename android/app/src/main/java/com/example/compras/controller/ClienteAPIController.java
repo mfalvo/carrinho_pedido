@@ -63,6 +63,7 @@ public class ClienteAPIController {
             @Override
             public void onResponse(Call<Cliente> call, Response<Cliente> response) {
                 responseCallback.onSuccess(response.body());
+
             }
             @Override
             public void onFailure(Call<Cliente> call, Throwable t) {
